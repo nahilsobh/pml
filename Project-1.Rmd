@@ -1,0 +1,80 @@
+---
+title: "Project-Applied-LM"
+author: "Nahil Sobh"
+date: "September 27, 2015"
+output: html_document
+---
+
+#Background
+
+In this project, we used the data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants where they were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+More information is available at http://groupware.les.inf.puc-rio.br/har
+
+
+#Goal
+The goal of this  project is to predict the manner in which the participants do the exercise. 
+The "classe" variable in the training set is used to predict the correctness of the exercise. 
+
+
+##Loading the taining and testing Data 
+```{r}
+pml_training=read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+pml_test    =read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
+```
+
+##Model
+We will initially use the data related to the "pitch" to build modFit1 then 
+"pitch" and roll" for modFit2 of the four sensors to predict the "classe" quality variable:
+(if processing time is not large we may consider the "yaw" in addition to the previous two in modFit3)
+
+Let us find the columns corresponding to pitch, roll and yaw:
+```{r}
+pitch=grep("^pitch",names(pml_training))
+roll=grep("^roll",names(pml_training))
+yaw=grep("^yaw",names(pml_training))
+```
+
+Now let us confirm these are indeed the columns corresponding to "pitch", "roll" and "yaw" of the four sensors:
+```{r}
+names(pml_training)[pitch]
+names(pml_training)[roll]
+names(pml_training)[yaw]
+```
+
+Here is the first model where we only used the pitch data:
+```{r}
+library(caret)
+modFit1 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm,method="rf",data=pml_training)
+```
+
+In sample error: The error rate due to predicting the "classe"" using the training set.
+Out of sample error: The error rate due to predicting the "classe"" using the test set.
+
+List below are the OOB (Out-Of-Bag) error. This correponds to out-of-sample error on the training set. 
+The literature also suggest that this error is a good estimate for out-of-sample error on the test set.
+```{r}
+modFit1$finalModel
+```
+
+Predicted values of classe based on the pml_train data.
+```{r}
+predict(modFit1,pml_test)
+```
+
+
+Now we increase the number of predictors to reduce the oob. We add the "roll" variables to the list as shown below
+```{r}
+library(caret)
+modFit2 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm+roll_belt+roll_arm+roll_dumbbell+roll_forearm,method="rf",data=pml_training)
+```
+
+
+The out-of-bag error is much lower than before:
+```{r}
+modFit2$finalModel
+```
+
+The corresponding predicted values are:
+```{r}
+predict(modFit2,pml_test)
+```
