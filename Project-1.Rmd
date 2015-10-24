@@ -34,7 +34,7 @@ roll=grep("^roll",names(pml_training))
 yaw=grep("^yaw",names(pml_training))
 ```
 
-Now let us confirm these are indeed the columns corresponding to "pitch", "roll" and "yaw" of the four sensors:
+Now let us confirm these are indeed the columns corresponding to "pitch", "roll" and "yaw" of the four sensors in the training set:
 ```{r}
 names(pml_training)[pitch]
 names(pml_training)[roll]
@@ -62,7 +62,7 @@ predict(modFit1,pml_test)
 ```
 
 
-Now we increase the number of predictors to reduce the oob. We add the "roll" variables to the list as shown below
+Now we increase the number of predictors to reduce the oob. We add the "roll" variables to the list as shown below and build the model using the training set:
 ```{r}
 library(caret)
 modFit2 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm+roll_belt+roll_arm+roll_dumbbell+roll_forearm,method="rf",data=pml_training)
