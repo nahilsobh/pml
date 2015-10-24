@@ -1,7 +1,7 @@
 ---
 title: "Project-Applied-LM"
 author: "Nahil Sobh"
-date: "September 27, 2015"
+date: "October 24, 2015"
 output: html_document
 ---
 
@@ -27,7 +27,7 @@ We will initially use the data related to the "pitch" to build modFit1 then
 "pitch" and roll" for modFit2 of the four sensors to predict the "classe" quality variable:
 (if processing time is not large we may consider the "yaw" in addition to the previous two in modFit3)
 
-Let us find the columns corresponding to pitch, roll and yaw:
+Let us find the columns corresponding to pitch, roll and yaw training:
 ```{r}
 pitch=grep("^pitch",names(pml_training))
 roll=grep("^roll",names(pml_training))
@@ -62,7 +62,7 @@ predict(modFit1,pml_test)
 ```
 
 
-Now we increase the number of predictors to reduce the oob. We add the "roll" variables to the list as shown below and build the model using the training set:
+Now we increase the number of predictors to reduce the oob. We add the "roll" variables to the list as shown below
 ```{r}
 library(caret)
 modFit2 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm+roll_belt+roll_arm+roll_dumbbell+roll_forearm,method="rf",data=pml_training)
