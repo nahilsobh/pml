@@ -74,7 +74,7 @@ img {
 </div>
 <div id="goal" class="section level1">
 <h1>Goal</h1>
-<p>The goal of this project is to predict the manner in which the participants do the exercise. The “classe” variable in the training set is used to predict the correctness of the exercise.</p>
+<p>The goal of this project is to predict the manner in which the participants do the exercise. The â€œclasseâ€ variable in the training set is used to predict the correctness of the exercise.</p>
 <div id="loading-the-taining-and-testing-data" class="section level2">
 <h2>Loading the taining and testing Data</h2>
 <pre class="r"><code>pml_training=read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;)
@@ -82,12 +82,12 @@ pml_test    =read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/
 </div>
 <div id="model" class="section level2">
 <h2>Model</h2>
-<p>We will initially use the data related to the “pitch” to build modFit1 then “pitch” and roll&quot; for modFit2 of the four sensors to predict the “classe” quality variable: (if processing time is not large we may consider the “yaw” in addition to the previous two in modFit3)</p>
-<p>Let us find the columns corresponding to pitch, roll and yaw:</p>
+<p>We will initially use the data related to the â€œpitchâ€ to build modFit1 then â€œpitchâ€ and roll&quot; for modFit2 of the four sensors to predict the â€œclasseâ€ quality variable: (if processing time is not large we may consider the â€œyawâ€ in addition to the previous two in modFit3)</p>
+<p>Let us find the columns corresponding to pitch, roll and yaw training:</p>
 <pre class="r"><code>pitch=grep(&quot;^pitch&quot;,names(pml_training))
 roll=grep(&quot;^roll&quot;,names(pml_training))
 yaw=grep(&quot;^yaw&quot;,names(pml_training))</code></pre>
-<p>Now let us confirm these are indeed the columns corresponding to “pitch”, “roll” and “yaw” of the four sensors:</p>
+<p>Now let us confirm these are indeed the columns corresponding to â€œpitchâ€, â€œrollâ€ and â€œyawâ€ of the four sensors in the training set:</p>
 <pre class="r"><code>names(pml_training)[pitch]</code></pre>
 <pre><code>## [1] &quot;pitch_belt&quot;     &quot;pitch_arm&quot;      &quot;pitch_dumbbell&quot; &quot;pitch_forearm&quot;</code></pre>
 <pre class="r"><code>names(pml_training)[roll]</code></pre>
@@ -99,10 +99,11 @@ yaw=grep(&quot;^yaw&quot;,names(pml_training))</code></pre>
 <pre><code>## Loading required package: lattice
 ## Loading required package: ggplot2</code></pre>
 <pre class="r"><code>modFit1 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm,method=&quot;rf&quot;,data=pml_training)</code></pre>
-<pre><code>## Loading required package: randomForest
-## randomForest 4.6-10
+<pre><code>## Loading required package: randomForest</code></pre>
+<pre><code>## Warning: package 'randomForest' was built under R version 3.2.2</code></pre>
+<pre><code>## randomForest 4.6-12
 ## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<p>In sample error: The error rate due to predicting the “classe”&quot; using the training set. Out of sample error: The error rate due to predicting the “classe”&quot; using the test set.</p>
+<p>In sample error: The error rate due to predicting the â€œclasseâ€&quot; using the training set. Out of sample error: The error rate due to predicting the â€œclasseâ€&quot; using the test set.</p>
 <p>List below are the OOB (Out-Of-Bag) error. This correponds to out-of-sample error on the training set. The literature also suggest that this error is a good estimate for out-of-sample error on the test set.</p>
 <pre class="r"><code>modFit1$finalModel</code></pre>
 <pre><code>## 
@@ -112,19 +113,19 @@ yaw=grep(&quot;^yaw&quot;,names(pml_training))</code></pre>
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 2
 ## 
-##         OOB estimate of  error rate: 12.91%
+##         OOB estimate of  error rate: 12.74%
 ## Confusion matrix:
 ##      A    B    C    D    E class.error
-## A 4968  233  179  129   71   0.1096774
-## B  296 3036  176  123  166   0.2004214
-## C  115   90 2953  165   99   0.1370544
-## D   48   61  138 2909   60   0.0954602
-## E   49  131  118   86 3223   0.1064597</code></pre>
+## A 4972  225  178  134   71  0.10896057
+## B  285 3053  166  121  172  0.19594417
+## C  118   92 2950  168   94  0.13793103
+## D   53   59  135 2910   59  0.09514925
+## E   52  122  110   85 3238  0.10230108</code></pre>
 <p>Predicted values of classe based on the pml_train data.</p>
 <pre class="r"><code>predict(modFit1,pml_test)</code></pre>
 <pre><code>##  [1] B C B A A E D D A A A C B A E E A B B B
 ## Levels: A B C D E</code></pre>
-<p>Now we increase the number of predictors to reduce the oob. We add the “roll” variables to the list as shown below</p>
+<p>Now we increase the number of predictors to reduce the oob. We add the â€œrollâ€ variables to the list as shown below</p>
 <pre class="r"><code>library(caret)
 modFit2 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm+roll_belt+roll_arm+roll_dumbbell+roll_forearm,method=&quot;rf&quot;,data=pml_training)</code></pre>
 <p>The out-of-bag error is much lower than before:</p>
@@ -136,17 +137,17 @@ modFit2 = train(classe~pitch_belt+pitch_arm+pitch_dumbbell+pitch_forearm+roll_be
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 2
 ## 
-##         OOB estimate of  error rate: 1.98%
+##         OOB estimate of  error rate: 1.91%
 ## Confusion matrix:
 ##      A    B    C    D    E class.error
-## A 5547   15   10    3    5 0.005913978
-## B   42 3644   76   27    8 0.040294970
-## C    3   29 3332   50    8 0.026300409
-## D    1    8   56 3149    2 0.020833333
-## E    0   12   20   14 3561 0.012752980</code></pre>
+## A 5550   11    9    5    5 0.005376344
+## B   34 3656   75   24    8 0.037134580
+## C    3   27 3328   56    8 0.027469316
+## D    2    6   57 3150    1 0.020522388
+## E    0   11   21   12 3563 0.012198503</code></pre>
 <p>The corresponding predicted values are:</p>
 <pre class="r"><code>predict(modFit2,pml_test)</code></pre>
-<pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
+<pre><code>##  [1] B A B A A E C B A A B C B A E E A B B B
 ## Levels: A B C D E</code></pre>
 </div>
 </div>
